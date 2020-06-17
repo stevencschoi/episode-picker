@@ -1,20 +1,7 @@
 import React, { useEffect } from "react";
 import "./App.css";
 import { Store } from "./Store";
-
-interface IEpisode {
-  airdate: string;
-  airstamp: string;
-  airtime: string;
-  id: number;
-  image: { medium: string; original: string };
-  name: string;
-  number: number;
-  runtime: number;
-  season: number;
-  summary: string;
-  url: string;
-}
+import { IEpisode, IAction } from "./interfaces";
 
 function App(): JSX.Element {
   const { state, dispatch } = React.useContext(Store);
@@ -34,23 +21,50 @@ function App(): JSX.Element {
     });
   };
 
+  const toggleFavAction = (episode: IEpisode): IAction => {
+    // check if episode is already in favourites
+    const episodeInFav = state.favourites.includes(episode);
+    let dispatchObj = {
+      type: "ADD_FAV",
+      payload: episode,
+    };
+    if (episodeInFav) {
+      const favWithoutEpisode = state.favourites.filter(
+        (fav: IEpisode) => fav.id !== episode.id
+      );
+      dispatchObj = {
+        type: "REMOVE_FAV",
+        payload: favWithoutEpisode,
+      };
+    }
+
+    return dispatch(dispatchObj);
+  };
+
   console.log(state);
   return (
     <>
-      <h1>Rick and Morty</h1>
-      <p>Pick your favourite episode!</p>
+      <header className="header">
+        <h1>Rick and Morty</h1>
+        <p>Pick your favourite episode!</p>
+      </header>
 
-      <section>
+      <section className="episode-layout">
         {state.episodes.map((episode: IEpisode) => {
           return (
-            <section key={episode.id}>
+            <section key={episode.id} className="episode-box">
               <img
                 src={episode.image.medium}
                 alt={`Rick and Morty ${episode.name}`}
               />
               <div>{episode.name}</div>
               <section>
-                Season: {episode.season} Number: {episode.number}
+                <div>
+                  Season: {episode.season} Number: {episode.number}
+                </div>
+                <button type="button" onClick={() => toggleFavAction(episode)}>
+                  Favourite
+                </button>
               </section>
             </section>
           );
