@@ -3,6 +3,8 @@ import "./App.css";
 import { Store } from "./Store";
 import { IEpisode, IAction } from "./interfaces";
 
+const EpisodesList = React.lazy<any>(() => import("./EpisodesList"));
+
 function App(): JSX.Element {
   const { state, dispatch } = React.useContext(Store);
 
@@ -41,39 +43,26 @@ function App(): JSX.Element {
     return dispatch(dispatchObj);
   };
 
-  console.log(state);
+  const props = {
+    episodes: state.episodes,
+    toggleFavAction,
+    favourites: state.favourites,
+  };
+
   return (
     <>
       <header className="header">
-        <h1>Rick and Morty</h1>
-        <p>Pick your favourite episode!</p>
+        <div>
+          <h1>Rick and Morty</h1>
+          <p>Pick your favourite episode!</p>
+        </div>
+        <div>Favourite(s): {state.favourites.length}</div>
       </header>
-
-      <section className="episode-layout">
-        {state.episodes.map((episode: IEpisode) => {
-          return (
-            <section key={episode.id} className="episode-box">
-              <img
-                src={episode.image.medium}
-                alt={`Rick and Morty ${episode.name}`}
-              />
-              <div>{episode.name}</div>
-              <section>
-                <div>
-                  Season: {episode.season} Number: {episode.number}
-                </div>
-                <button type="button" onClick={() => toggleFavAction(episode)}>
-                  {state.favourites.find(
-                    (fav: IEpisode) => fav.id === episode.id
-                  )
-                    ? "Unfavourite"
-                    : "Favourite"}
-                </button>
-              </section>
-            </section>
-          );
-        })}
-      </section>
+      <React.Suspense fallback={<div>Loading...</div>}>
+        <section className="episode-layout">
+          <EpisodesList {...props}></EpisodesList>
+        </section>
+      </React.Suspense>
     </>
   );
 }
