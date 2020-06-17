@@ -63,7 +63,11 @@ function App(): JSX.Element {
                   Season: {episode.season} Number: {episode.number}
                 </div>
                 <button type="button" onClick={() => toggleFavAction(episode)}>
-                  Favourite
+                  {state.favourites.find(
+                    (fav: IEpisode) => fav.id === episode.id
+                  )
+                    ? "Unfavourite"
+                    : "Favourite"}
                 </button>
               </section>
             </section>
