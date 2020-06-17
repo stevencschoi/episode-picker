@@ -2,6 +2,20 @@ import React, { useEffect } from "react";
 import "./App.css";
 import { Store } from "./Store";
 
+interface IEpisode {
+  airdate: string;
+  airstamp: string;
+  airtime: string;
+  id: number;
+  image: { medium: string; original: string };
+  name: string;
+  number: number;
+  runtime: number;
+  season: number;
+  summary: string;
+  url: string;
+}
+
 function App(): JSX.Element {
   const { state, dispatch } = React.useContext(Store);
 
@@ -27,7 +41,7 @@ function App(): JSX.Element {
       <p>Pick your favourite episode!</p>
 
       <section>
-        {state.episodes.map(episode => {
+        {state.episodes.map((episode: IEpisode) => {
           return (
             <section key={episode.id}>
               <img
